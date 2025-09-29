@@ -30,7 +30,7 @@ async def create_empty_company():
 
 async def edit_company(telegram_id):
     async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as client:
-        await client.update_company_fields(telegram_id, first_name="Bob", about_company="Сбор средств на лечение пса",)
+        await client.update_company_fields(telegram_id, first_name="Lina", about_company="Сбор средств на лечение пса",)
 
 
 if __name__ == "__main__":
