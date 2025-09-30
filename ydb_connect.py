@@ -13,6 +13,9 @@ from datetime import datetime, timezone
 # пропускная способность базы - 50 запросов/секунду сейчас
 
 
+# ------------------------------------------------------------ Базовый класс -----------------------------------------------------------
+
+
 class YDBClient:
     def __init__(self, endpoint: str = YDB_ENDPOINT, database: str = YDB_PATH, token: str = YDB_TOKEN):
         """
@@ -121,6 +124,7 @@ class YDBClient:
 
         tables = [
             "donate_companies",
+            "payments"
         ]
 
         for table in tables:
@@ -131,6 +135,9 @@ class YDBClient:
                 print(f"Ошибка при очистке {table}: {e}")
 
 
+# ------------------------------------------------------------ ДОНАТ КОМПАНИЯ -----------------------------------------------------------
+
+
 @dataclass
 class DonateCompany:
     telegram_id: int
@@ -138,6 +145,7 @@ class DonateCompany:
     about_company: Optional[str] = None
     photo_id: Optional[str] = None
     prices: Optional[str] = None
+    link: Optional[str] = None
 
 
 class DonateCompanyClient(YDBClient):
@@ -151,6 +159,7 @@ class DonateCompanyClient(YDBClient):
                 `about_company` Utf8,
                 `photo_id` Utf8,
                 `prices` Utf8,
+                `link` Utf8,
                 PRIMARY KEY (`telegram_id`)
             )
         """
@@ -168,11 +177,12 @@ class DonateCompanyClient(YDBClient):
             DECLARE $about_company AS Utf8?;
             DECLARE $photo_id AS Utf8?;
             DECLARE $prices AS Utf8?;
+            DECLARE $link AS Utf8?;
 
             UPSERT INTO donate_companies (
-                telegram_id, first_name, about_company, photo_id, prices
+                telegram_id, first_name, about_company, photo_id, prices, link
             ) VALUES (
-                $telegram_id, $first_name, $about_company, $photo_id, $prices
+                $telegram_id, $first_name, $about_company, $photo_id, $prices, $link
             );
             """,
             self._to_params(donate_company)
@@ -185,7 +195,7 @@ class DonateCompanyClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
 
-            SELECT telegram_id, first_name, about_company, photo_id, prices
+            SELECT telegram_id, first_name, about_company, photo_id, prices, link
             FROM donate_companies
             WHERE telegram_id = $telegram_id;
             """,
@@ -207,12 +217,14 @@ class DonateCompanyClient(YDBClient):
             DECLARE $about_company AS Utf8?;
             DECLARE $photo_id AS Utf8?;
             DECLARE $prices AS Utf8?;
+            DECLARE $link AS Utf8?;
 
             UPDATE donate_companies SET
                 first_name = $first_name,
                 about_company = $about_company,
                 photo_id = $photo_id,
-                prices = $prices
+                prices = $prices,
+                link = $link
             WHERE telegram_id = $telegram_id;
             """,
             self._to_params(donate_company)
@@ -226,7 +238,7 @@ class DonateCompanyClient(YDBClient):
 
         # Фильтруем только поля, которые относятся к таблице users
         company_fields = {k: v for k, v in fields.items() 
-                      if k in ['first_name', 'about_company', 'photo_id', 'prices']}
+                      if k in ['first_name', 'about_company', 'photo_id', 'prices', 'link']}
         
         if not company_fields:
             return False
@@ -270,7 +282,8 @@ class DonateCompanyClient(YDBClient):
             first_name=row.get("first_name"),
             about_company=row.get("about_company"),
             photo_id=row.get("photo_id"),
-            prices=row.get("prices")
+            prices=row.get("prices"),
+            link=row.get("link")
         )
 
     def _to_params(self, donate_company: DonateCompany) -> dict:
@@ -279,5 +292,119 @@ class DonateCompanyClient(YDBClient):
             "$first_name": (donate_company.first_name, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$about_company": (donate_company.about_company, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$photo_id": (donate_company.photo_id, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
-            "$prices": (donate_company.prices, ydb.OptionalType(ydb.PrimitiveType.Utf8))
+            "$prices": (donate_company.prices, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
+            "$link": (donate_company.link, ydb.OptionalType(ydb.PrimitiveType.Utf8))
         }
+    
+
+
+# --------------------------------------------------------------- ПЛАТЕЖИ -----------------------------------------------------------------
+
+
+@dataclass
+class Payment:
+    telegram_id: int
+    amount: int
+    link: str
+    created_at: Optional[int] = None  # Храним как timestamp (секунды с эпохи)
+
+
+class PaymentClient(YDBClient):
+    def __init__(self, endpoint: str = YDB_ENDPOINT, database: str = YDB_PATH, token: str = YDB_TOKEN):
+        super().__init__(endpoint, database, token)
+        self.table_name = "payments"
+        self.table_schema = """
+            CREATE TABLE `payments` (
+                `telegram_id` Uint64 NOT NULL,
+                `amount` Uint32 NOT NULL,
+                `link` Utf8 NOT NULL,
+                `created_at` Uint64 NOT NULL,
+                PRIMARY KEY (`created_at`)
+            )
+        """
+    
+    async def create_payments_table(self):
+        """
+        Создание таблицы payments
+        """
+        await self.create_table(self.table_name, self.table_schema)
+    
+    async def insert_payment(self, payment: Payment) -> Payment:
+        """
+        Вставка нового платежа
+        """
+        if payment.created_at is None:
+            payment.created_at = int(datetime.now(timezone.utc).timestamp() * 1000)
+        
+        await self.execute_query(
+            """
+            DECLARE $telegram_id AS Uint64;
+            DECLARE $amount AS Uint32;
+            DECLARE $link AS Utf8;
+            DECLARE $created_at AS Uint64;
+
+            INSERT INTO payments (telegram_id, amount, link, created_at)
+            VALUES ($telegram_id, $amount, $link, $created_at);
+            """,
+            self._to_params(payment)
+        )
+
+    async def delete_payment(self, created_at: int) -> None:
+        """
+        Удаление платежа по ID
+        """
+        await self.execute_query(
+            """
+            DECLARE $created_at AS Uint64;
+            DELETE FROM payments WHERE created_at = $created_at;
+            """,
+            {"$created_at": (created_at, ydb.PrimitiveType.Uint64)}
+        )
+
+    # --- helpers ---
+    def _row_to_payment(self, row) -> Payment:
+        return Payment(
+            telegram_id=row["telegram_id"],
+            amount=row["amount"],
+            link=row["link"],
+            created_at=row["created_at"],
+        )
+    
+    @staticmethod
+    def timestamp_to_datetime(timestamp: int) -> datetime:
+        """Конвертация timestamp в datetime объект"""
+        return datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    
+    @staticmethod
+    def datetime_to_timestamp(dt: datetime) -> int:
+        """Конвертация datetime в timestamp"""
+        return int(dt.timestamp())
+
+    def _to_params(self, payment: Payment) -> dict:
+        return {
+            "$telegram_id": (payment.telegram_id, ydb.PrimitiveType.Uint64),
+            "$amount": (payment.amount, ydb.PrimitiveType.Uint32),
+            "$link": (payment.link, ydb.PrimitiveType.Utf8),
+            "$created_at": (payment.created_at, ydb.PrimitiveType.Uint64),
+        }
+    
+
+# --------------------------------------------------------- СОЗДАНИЕ ТАБЛИЦ -------------------------------------------------------
+
+
+async def create_tables_on_ydb():
+    # Создание всех таблиц в базе
+    async with DonateCompanyClient() as client:
+        await client.create_companies_table()
+        print("Table 'DONATE_COMPANIES' created successfully!")
+
+    async with PaymentClient() as client:
+        await client.create_payments_table()
+        print("Table 'PAYMENTS' created successfully!")
+
+
+# --------------------------------------------------------- ЗАПУСК -------------------------------------------------------
+
+
+if __name__ == "__main__":
+    asyncio.run(create_tables_on_ydb())

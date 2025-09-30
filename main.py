@@ -6,6 +6,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from config import BOT_API_KEY, ADMIN_ID
 from languages import get_texts
 from aiogram.client.default import DefaultBotProperties
+from buttons import *
 
 
 # Настройка логирования
@@ -35,7 +36,8 @@ async def cmd_start(message: types.Message, command: CommandStart):
     
     # логика creators
     else:
-        await message.answer(text["TEXT"]['start'].format(first_name=first_name))
+        await message.answer(text["TEXT"]['start'].format(first_name=first_name),
+                             reply_markup=await donate_company_begin_button(text))
 
 
 async def main():

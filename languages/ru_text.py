@@ -7,4 +7,5 @@ TEXT = {'start': 'Привет, {first_name}!\n'
                  '• Ограничения — описаны в <a href="https://telegram.org/tos/affiliate-program/ru">Соглашении</a>'
         }
 
-BUTTONS_TEXT = {}
+BUTTONS_TEXT = {'begin': 'Создать донат компанию',
+                'pay': 'Оплатить'}
