@@ -17,6 +17,12 @@ LANGUAGES = {
 
 }
 
+IMAGES = {
+    "ru": {"IMAGE": ru_text.IMAGE},
+    "en": {"IMAGE": en_text.IMAGE},
+}
+
+
 """
     
     "kk": {"TEXT": kk_text.TEXT, "BUTTONS_TEXT": kk_text.BUTTONS_TEXT},
@@ -63,3 +69,8 @@ LANGUAGES = {
 async def get_texts(lang_code: str) -> dict:
     """Возвращает набор словарей по коду языка."""
     return LANGUAGES.get(lang_code, LANGUAGES["en"])
+
+
+async def get_images(lang_code: str) -> dict:
+    """Возвращает набор словарей по коду языка."""
+    return IMAGES.get(lang_code, IMAGES["en"])

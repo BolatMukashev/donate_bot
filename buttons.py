@@ -6,7 +6,7 @@ from uuid import uuid4
 
 async def donate_company_begin_button(texts: dict):
     # Кнопка 18+ и согласие с политикой и соглашением
-    button = InlineKeyboardButton(text=texts["BUTTONS_TEXT"]["begin"], callback_data="begin")
+    button = InlineKeyboardButton(text=texts["BUTTONS_TEXT"]["begin"], callback_data="step_1")
     markup = InlineKeyboardMarkup(inline_keyboard=[[button]])
     
     return markup
