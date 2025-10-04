@@ -1,5 +1,5 @@
 import asyncio
-from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment
+from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, YDBClient
 from config import YDB_ENDPOINT, YDB_PATH, YDB_TOKEN
 
 
@@ -40,6 +40,11 @@ async def create_new_payment():
         await client.insert_payment(new_payment)
 
 
+async def reset_database():
+    async with YDBClient() as cleaner:
+        await cleaner.clear_all_tables()
+
+
 if __name__ == "__main__":
-    asyncio.run(create_new_payment())
+    asyncio.run(reset_database())
 

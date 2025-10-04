@@ -7,7 +7,7 @@ from config import BOT_API_KEY, ADMIN_ID, START_IMAGE
 from languages import get_texts, get_images
 from aiogram.client.default import DefaultBotProperties
 from buttons import *
-from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment
+from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient
 from config import YDB_ENDPOINT, YDB_PATH, YDB_TOKEN
 
 
@@ -30,6 +30,7 @@ async def cmd_test(message: types.Message, ):
 
 @dp.message(CommandStart())
 async def cmd_start(message: types.Message, command: CommandStart):
+    user_id = message.from_user.id
     first_name = message.from_user.first_name
     user_lang = message.from_user.language_code
 
@@ -43,8 +44,11 @@ async def cmd_start(message: types.Message, command: CommandStart):
     
     # логика creators
     else:
-        await message.answer_photo(photo=START_IMAGE, caption=text['TEXT']['start'].format(first_name=first_name),
-                                   reply_markup=await donate_company_begin_button(text))
+        start_message = await message.answer_photo(photo=START_IMAGE, caption=text['TEXT']['start'].format(first_name=first_name),
+                                                   reply_markup=await donate_company_begin_button(text))
+        async with CacheClient() as cache_client:
+            new_cache = Cache(telegram_id=user_id, parameter="start_message_id", message_id=start_message.message_id)
+            await cache_client.insert_cache(new_cache)
 
 
 @dp.callback_query(F.data == "step_1")
@@ -64,9 +68,15 @@ async def query_get_text(callback: types.CallbackQuery):
     )
     async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as client:
         await client.insert_company(new_company)
+    
+    async with CacheClient() as cache_client:
+        await cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=1))
 
-    await callback.message.edit_media()
-    # answer_photo(photo=images['IMAGE']['step_1'], caption=text['TEXT']['step_1'])
+
+    # msg_id = user_cache.get("start_message_id")
+    photo = images['IMAGE']['step_1']
+    caption = text['TEXT']['step_1']
+    await callback.message.edit_media(media=types.InputMediaPhoto(media=photo, caption=caption))
 
 
 # обработка фото
@@ -75,20 +85,82 @@ async def handle_photo(message: types.Message):
     user_id = message.from_user.id
     user_lang = message.from_user.language_code
 
+    async with CacheClient() as cache_client:
+        user_cache = await cache_client.get_cache_by_telegram_id(user_id)
+
+    step_number = int(user_cache.get("step")) if user_cache.get("step") else None
+
+    await message.delete()
+
     photo = message.photo[-1]
     file_id = photo.file_id
-    print(file_id)
+    # print(file_id)
 
-    # await message.delete()
+    if step_number != 1:
+        return
 
     text = await get_texts(user_lang)
     images = await get_images(user_lang)
 
-    async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as client:
-        await client.update_company_fields(user_id, photo_id=file_id)
+    async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
+        await asyncio.gather(
+            donate_client.update_company_fields(user_id, photo_id=file_id),
+            cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=2))
+            )
     
+    msg_id = user_cache.get("start_message_id")
+    photo = images['IMAGE']['step_2']
+    caption = text['TEXT']['step_2']
+    await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id, media=types.InputMediaPhoto(media=photo, caption=caption))
 
-    await message.answer_photo(photo=images['IMAGE']['step_2'], caption=text['TEXT']['step_2'])
+
+@dp.message(F.text)
+async def handle_text(message: types.Message):
+    user_id = message.from_user.id
+    user_lang = message.from_user.language_code
+    user_text = message.text
+
+    async with CacheClient() as cache_client:
+        user_cache = await cache_client.get_cache_by_telegram_id(user_id)
+
+    step_number = int(user_cache.get("step")) if user_cache.get("step") else None
+
+    await message.delete()
+
+    if not step_number:
+        return
+    
+    text = await get_texts(user_lang)
+    images = await get_images(user_lang)
+
+    if step_number == 2:
+        async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
+            await asyncio.gather(
+                donate_client.update_company_fields(user_id, about_company=user_text),
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=3))
+                )
+        await message.edit_media(media=types.InputMediaPhoto(media=images['IMAGE']['step_3'], caption=text['TEXT']['step_3']))
+
+    elif step_number == 3:
+        async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
+            await asyncio.gather(
+                donate_client.update_company_fields(user_id, link_text=user_text),
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=4))
+                )
+        await message.edit_media(media=types.InputMediaPhoto(media=images['IMAGE']['step_4'], caption=text['TEXT']['step_4']))
+
+
+
+
+# ------------------------------------------------------------------- Обработка других форматов -------------------------------------------------------
+
+
+@dp.message(~(F.text | F.photo))
+async def delete_unwanted(message: types.Message):
+    try:
+        await message.delete()
+    except Exception as e:
+        print(f"⚠️ Не удалось удалить сообщение: {e}")
 
 
 async def main():
