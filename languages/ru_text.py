@@ -14,13 +14,14 @@ TEXT = {'start': 'Привет, {first_name}!\n'
                 'Постарайся написать искренне и понятно',
         'step_3': '<b>Шаг 3. Придумай КОРОТКИЙ ТЕКСТ для ссылки</b>\n'
                 'На этот текст в посте будут нажимать подписчики, чтобы перейти в бота для оплаты (например: <i>«Сделать донат»</i> или <i>«Поддержать проект»</i>)',
-        'step_4': '<b>Шаг 4. Отправьте партнёрскую ССЫЛКУ</b>. Чтобы её получить нужно:\n'
+        'step_4': '<b>Шаг 4. Отправьте партнёрскую ССЫЛКУ</b>.\n\n'
+                '<i>Чтобы её получить нужно:\n'
                 '• Откройте описание бота\n'
                 '• Нажмите \"Партнерская программа\"\n'
                 '• Нажмите \"Участвовать\"\n'
                 '• Нажмите \"Копировать ссылку\"\n'
                 '• Вернитесь к диалогу с ботом и отправьте ссылку\n'
-                '<i>Вставьте её полностью (например: https://t.me/donate_company_bot?start=donate123)</i>',
+                'Вставьте её полностью (например: https://t.me/donate_company\u200B_bot?start=donate123)</i>',
         'step_5': '<b>Шаг 5. Напишите ВАРИАНТЫ донатов</b>\n'
                 'Пропишите суммы через пробел, минимум 2 варианта\n'
                 'Подписчики смогут выбрать одну из них <i>(например: 50 100 250 500)</i>\n'
@@ -35,4 +36,6 @@ IMAGE = {'step_1': 'AgACAgIAAxkBAAPRaN0VRp0YSu3EAAHxAblFz5YlXv1lAAK7-DEb69noSl5Q
          'step_2': 'AgACAgIAAxkBAAPSaN0VaE0478soMSjUmqavdvI-ZfMAAr34MRvr2ehKE-rXyzkrsgsBAAMCAAN3AAM2BA',
          'step_3': 'AgACAgIAAxkBAAPTaN0Vcr6dhRIeNHS-MGF3x2RkGn4AAr_4MRvr2ehKpxrUZRkuIncBAAMCAAN3AAM2BA',
          'step_4': 'AgACAgIAAxkBAAPUaN0VeBF_Ah1PBN9ovxZka1ujVTkAAsH4MRvr2ehKghv6zMTcFDIBAAMCAAN3AAM2BA',
-         'step_5': 'AgACAgIAAxkBAAPVaN0VepcGdIyMjEva_dnNelb5ft4AAsL4MRvr2ehKb8UMMpxjAjIBAAMCAAN3AAM2BA'}
+         'step_5': 'AgACAgIAAxkBAAPVaN0VepcGdIyMjEva_dnNelb5ft4AAsL4MRvr2ehKb8UMMpxjAjIBAAMCAAN3AAM2BA',
+         'end':''
+         }

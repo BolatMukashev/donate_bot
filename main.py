@@ -9,6 +9,7 @@ from aiogram.client.default import DefaultBotProperties
 from buttons import *
 from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient
 from config import YDB_ENDPOINT, YDB_PATH, YDB_TOKEN
+import re
 
 
 # Настройка логирования
@@ -124,6 +125,7 @@ async def handle_text(message: types.Message):
         user_cache = await cache_client.get_cache_by_telegram_id(user_id)
 
     step_number = int(user_cache.get("step")) if user_cache.get("step") else None
+    msg_id = user_cache.get("start_message_id")
 
     await message.delete()
 
@@ -139,7 +141,8 @@ async def handle_text(message: types.Message):
                 donate_client.update_company_fields(user_id, about_company=user_text),
                 cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=3))
                 )
-        await message.edit_media(media=types.InputMediaPhoto(media=images['IMAGE']['step_3'], caption=text['TEXT']['step_3']))
+        await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
+                                     media=types.InputMediaPhoto(media=images['IMAGE']['step_3'], caption=text['TEXT']['step_3']))
 
     elif step_number == 3:
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
@@ -147,9 +150,42 @@ async def handle_text(message: types.Message):
                 donate_client.update_company_fields(user_id, link_text=user_text),
                 cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=4))
                 )
-        await message.edit_media(media=types.InputMediaPhoto(media=images['IMAGE']['step_4'], caption=text['TEXT']['step_4']))
+        await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
+                                     media=types.InputMediaPhoto(media=images['IMAGE']['step_4'], caption=text['TEXT']['step_4']))
+        
+    elif step_number == 4:
+        link_pattern = re.compile(r"^https://t\.me/[\w\d_]+bot\?start=[\w\d_-]+$")
+
+        if not link_pattern.match(user_text.strip()):
+            return
+
+        async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
+            await asyncio.gather(
+                donate_client.update_company_fields(user_id, link=user_text),
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=5))
+                )
+        await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
+                                     media=types.InputMediaPhoto(media=images['IMAGE']['step_5'], caption=text['TEXT']['step_5']))
+    
+    elif step_number == 5:
+        number_pattern = re.compile(r"^\d+\s+\d+(?:\s+\d+)*$")
+
+        if not number_pattern.match(user_text.strip()):
+            return
+
+        async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
+            await asyncio.gather(
+                donate_client.update_company_fields(user_id, prices=user_text),
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=6))
+                )
+        await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
+                                     media=types.InputMediaPhoto(media=images['IMAGE']['end'], caption=text['TEXT']['end']))
 
 
+#TODO Congratulation! Заполнение донат-объявления завершено
+
+
+# вот ваше объявление для публикации:...
 
 
 # ------------------------------------------------------------------- Обработка других форматов -------------------------------------------------------
