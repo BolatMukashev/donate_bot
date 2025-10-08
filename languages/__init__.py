@@ -1,6 +1,8 @@
+from urllib.parse import quote
 from . import (
      ru_text, en_text,
 )
+
 
 """
     kk_text, pt_br_text,
@@ -74,3 +76,10 @@ async def get_texts(lang_code: str) -> dict:
 async def get_images(lang_code: str) -> dict:
     """Возвращает набор словарей по коду языка."""
     return IMAGES.get(lang_code, IMAGES["en"])
+
+
+async def get_caption(caption, link_text, ref_code) -> str:
+    """Возвращает описание объявления"""
+    link = f"https://t.me/donate_company_bot/app?startapp={quote(ref_code)}"
+    return f"{caption}\n\n<a href='{link}'>{link_text}</a>"
+

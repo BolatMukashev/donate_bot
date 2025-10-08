@@ -4,7 +4,7 @@ from aiogram.filters.command import Command
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.storage.memory import MemoryStorage
 from config import BOT_API_KEY, ADMIN_ID, START_IMAGE
-from languages import get_texts, get_images
+from languages import get_texts, get_images, get_caption
 from aiogram.client.default import DefaultBotProperties
 from buttons import *
 from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient
@@ -37,10 +37,8 @@ async def cmd_start(message: types.Message, command: CommandStart):
 
     text = await get_texts(user_lang)
 
-    payload = command.args   # значение после /start
-
-    # логика донатеров
-    if payload:
+    # TODO логика донатеров
+    if command.args:
         pass
     
     # логика creators
@@ -48,7 +46,7 @@ async def cmd_start(message: types.Message, command: CommandStart):
         start_message = await message.answer_photo(photo=START_IMAGE, caption=text['TEXT']['start'].format(first_name=first_name),
                                                    reply_markup=await donate_company_begin_button(text))
         async with CacheClient() as cache_client:
-            new_cache = Cache(telegram_id=user_id, parameter="start_message_id", message_id=start_message.message_id)
+            new_cache = Cache(telegram_id=user_id, parameter="start_message_id", value=start_message.message_id)
             await cache_client.insert_cache(new_cache)
 
 
@@ -71,7 +69,7 @@ async def query_get_text(callback: types.CallbackQuery):
         await client.insert_company(new_company)
     
     async with CacheClient() as cache_client:
-        await cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=1))
+        await cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=1))
 
 
     # msg_id = user_cache.get("start_message_id")
@@ -106,7 +104,7 @@ async def handle_photo(message: types.Message):
     async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
         await asyncio.gather(
             donate_client.update_company_fields(user_id, photo_id=file_id),
-            cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=2))
+            cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=2))
             )
     
     msg_id = user_cache.get("start_message_id")
@@ -139,7 +137,7 @@ async def handle_text(message: types.Message):
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
             await asyncio.gather(
                 donate_client.update_company_fields(user_id, about_company=user_text),
-                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=3))
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=3))
                 )
         await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
                                      media=types.InputMediaPhoto(media=images['IMAGE']['step_3'], caption=text['TEXT']['step_3']))
@@ -148,21 +146,23 @@ async def handle_text(message: types.Message):
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
             await asyncio.gather(
                 donate_client.update_company_fields(user_id, link_text=user_text),
-                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=4))
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=4))
                 )
         await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
                                      media=types.InputMediaPhoto(media=images['IMAGE']['step_4'], caption=text['TEXT']['step_4']))
         
     elif step_number == 4:
-        link_pattern = re.compile(r"^https://t\.me/[\w\d_]+bot\?start=[\w\d_-]+$")
+        link_pattern = re.compile(r"^https://t\.me/donate_company_bot\?start=[\w\d_-]+$")
 
         if not link_pattern.match(user_text.strip()):
             return
+        
+        ref_code = user_text.split("=")[-1]
 
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
             await asyncio.gather(
-                donate_client.update_company_fields(user_id, link=user_text),
-                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=5))
+                donate_client.update_company_fields(user_id, ref_code=ref_code),
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=5))
                 )
         await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
                                      media=types.InputMediaPhoto(media=images['IMAGE']['step_5'], caption=text['TEXT']['step_5']))
@@ -176,10 +176,17 @@ async def handle_text(message: types.Message):
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
             await asyncio.gather(
                 donate_client.update_company_fields(user_id, prices=user_text),
-                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", message_id=6))
+                cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=6))
                 )
         await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
                                      media=types.InputMediaPhoto(media=images['IMAGE']['end'], caption=text['TEXT']['end']))
+        
+        async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client:
+            company = await donate_client.get_company_by_id(user_id)
+        
+        await bot.send_photo(chat_id=message.chat.id,
+                             photo=company.photo_id,
+                             caption=await get_caption(company.about_company, company.link_text, company.ref_code))
 
 
 #TODO Congratulation! Заполнение донат-объявления завершено

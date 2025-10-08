@@ -144,7 +144,7 @@ class DonateCompany:
     photo_id: Optional[str] = None
     about_company: Optional[str] = None
     link_text: Optional[str] = None
-    link: Optional[str] = None
+    ref_code: Optional[str] = None
     prices: Optional[str] = None
 
 
@@ -159,7 +159,7 @@ class DonateCompanyClient(YDBClient):
                 `photo_id` Utf8,
                 `about_company` Utf8,
                 `link_text` Utf8,
-                `link` Utf8,
+                `ref_code` Utf8,
                 `prices` Utf8,
                 PRIMARY KEY (`telegram_id`)
             )
@@ -178,13 +178,13 @@ class DonateCompanyClient(YDBClient):
             DECLARE $photo_id AS Utf8?;
             DECLARE $about_company AS Utf8?;
             DECLARE $link_text AS Utf8?;
-            DECLARE $link AS Utf8?;
+            DECLARE $ref_code AS Utf8?;
             DECLARE $prices AS Utf8?;
 
             UPSERT INTO donate_companies (
-                telegram_id, first_name, photo_id, about_company, link_text, link, prices
+                telegram_id, first_name, photo_id, about_company, link_text, ref_code, prices
             ) VALUES (
-                $telegram_id, $first_name, $photo_id, $about_company, $link_text, $link, $prices
+                $telegram_id, $first_name, $photo_id, $about_company, $link_text, $ref_code, $prices
             );
             """,
             self._to_params(donate_company)
@@ -197,7 +197,7 @@ class DonateCompanyClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
 
-            SELECT telegram_id, first_name, photo_id, about_company, link_text, link, prices
+            SELECT telegram_id, first_name, photo_id, about_company, link_text, ref_code, prices
             FROM donate_companies
             WHERE telegram_id = $telegram_id;
             """,
@@ -209,6 +209,25 @@ class DonateCompanyClient(YDBClient):
             return None
 
         return self._row_to_company(rows[0])
+    
+    async def get_id_by_ref_code(self, ref_code: str) -> Optional[int]:
+        """Получение telegram_id по ref_code"""
+        result = await self.execute_query(
+            """
+            DECLARE $ref_code AS Utf8;
+
+            SELECT telegram_id
+            FROM donate_companies
+            WHERE ref_code = $ref_code;
+            """,
+            {"$ref_code": (ref_code, ydb.PrimitiveType.Utf8)}
+        )
+
+        rows = result[0].rows
+        if not rows:
+            return None
+
+        return rows[0]["telegram_id"]
 
     async def update_company(self, donate_company: DonateCompany) -> DonateCompany:
         """Обновление данных донат компании по объекту DonateCompany"""
@@ -219,7 +238,7 @@ class DonateCompanyClient(YDBClient):
             DECLARE $photo_id AS Utf8?;
             DECLARE $about_company AS Utf8?;
             DECLARE $link_text AS Utf8?;
-            DECLARE $link AS Utf8?;
+            DECLARE $ref_code AS Utf8?;
             DECLARE $prices AS Utf8?;
 
             UPDATE donate_companies SET
@@ -227,7 +246,7 @@ class DonateCompanyClient(YDBClient):
                 photo_id = $photo_id,
                 about_company = $about_company,
                 link_text = $link_text,
-                link = $link,
+                ref_code = $ref_code,
                 prices = $prices
             WHERE telegram_id = $telegram_id;
             """,
@@ -242,7 +261,7 @@ class DonateCompanyClient(YDBClient):
 
         # Фильтруем только поля, которые относятся к таблице users
         company_fields = {k: v for k, v in fields.items() 
-                      if k in ['first_name', 'photo_id', 'about_company', 'link_text', 'link', 'prices']}
+                      if k in ['first_name', 'photo_id', 'about_company', 'link_text', 'ref_code', 'prices']}
         
         if not company_fields:
             return False
@@ -287,7 +306,7 @@ class DonateCompanyClient(YDBClient):
             photo_id=row.get("photo_id"),
             about_company=row.get("about_company"),
             link_text=row.get("link_text"),
-            link=row.get("link"),
+            ref_code=row.get("ref_code"),
             prices=row.get("prices"),
         )
 
@@ -298,7 +317,7 @@ class DonateCompanyClient(YDBClient):
             "$photo_id": (donate_company.photo_id, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$about_company": (donate_company.about_company, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$link_text": (donate_company.link_text, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
-            "$link": (donate_company.link, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
+            "$ref_code": (donate_company.ref_code, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$prices": (donate_company.prices, ydb.OptionalType(ydb.PrimitiveType.Utf8))
         }
     
@@ -310,7 +329,7 @@ class DonateCompanyClient(YDBClient):
 class Payment:
     telegram_id: int
     amount: int
-    link: str
+    ref_code: str
     created_at: Optional[int] = None  # Храним как timestamp (секунды с эпохи)
 
 
@@ -322,7 +341,7 @@ class PaymentClient(YDBClient):
             CREATE TABLE `payments` (
                 `telegram_id` Uint64 NOT NULL,
                 `amount` Uint32 NOT NULL,
-                `link` Utf8 NOT NULL,
+                `ref_code` Utf8 NOT NULL,
                 `created_at` Uint64 NOT NULL,
                 PRIMARY KEY (`created_at`)
             )
@@ -345,11 +364,11 @@ class PaymentClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
             DECLARE $amount AS Uint32;
-            DECLARE $link AS Utf8;
+            DECLARE $ref_code AS Utf8;
             DECLARE $created_at AS Uint64;
 
-            INSERT INTO payments (telegram_id, amount, link, created_at)
-            VALUES ($telegram_id, $amount, $link, $created_at);
+            INSERT INTO payments (telegram_id, amount, ref_code, created_at)
+            VALUES ($telegram_id, $amount, $ref_code, $created_at);
             """,
             self._to_params(payment)
         )
@@ -371,7 +390,7 @@ class PaymentClient(YDBClient):
         return Payment(
             telegram_id=row["telegram_id"],
             amount=row["amount"],
-            link=row["link"],
+            ref_code=row["ref_code"],
             created_at=row["created_at"],
         )
     
@@ -389,7 +408,7 @@ class PaymentClient(YDBClient):
         return {
             "$telegram_id": (payment.telegram_id, ydb.PrimitiveType.Uint64),
             "$amount": (payment.amount, ydb.PrimitiveType.Uint32),
-            "$link": (payment.link, ydb.PrimitiveType.Utf8),
+            "$ref_code": (payment.ref_code, ydb.PrimitiveType.Utf8),
             "$created_at": (payment.created_at, ydb.PrimitiveType.Uint64),
         }
     
@@ -401,7 +420,7 @@ class PaymentClient(YDBClient):
 class Cache:
     telegram_id: int = None
     parameter: Optional[str] = None
-    message_id: Optional[int] = None
+    value: Optional[int] = None
 
 
 class CacheClient(YDBClient):
@@ -412,7 +431,7 @@ class CacheClient(YDBClient):
             CREATE TABLE `cache` (
                 `telegram_id` Uint64 NOT NULL,
                 `parameter` Utf8,
-                `message_id` Int32,
+                `value` Uint64,
                 PRIMARY KEY (`telegram_id`, `parameter`)
             )
         """
@@ -431,10 +450,10 @@ class CacheClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
             DECLARE $parameter AS Utf8?;
-            DECLARE $message_id AS Int32?;
+            DECLARE $value AS Uint64?;
 
-            UPSERT INTO cache (telegram_id, parameter, message_id)
-            VALUES ($telegram_id, $parameter, $message_id);
+            UPSERT INTO cache (telegram_id, parameter, value)
+            VALUES ($telegram_id, $parameter, $value);
             """,
             self._to_params(cache)
         )
@@ -442,13 +461,13 @@ class CacheClient(YDBClient):
     async def get_cache_by_telegram_id(self, telegram_id: int) -> dict[str, int]:
         """
         Получение всех записей кэша для пользователя в виде словаря:
-        {parameter: message_id}
+        {parameter: value}
         """
         result = await self.execute_query(
             """
             DECLARE $telegram_id AS Uint64;
 
-            SELECT parameter, message_id
+            SELECT parameter, value
             FROM cache
             WHERE telegram_id = $telegram_id
             ORDER BY parameter;
@@ -457,7 +476,7 @@ class CacheClient(YDBClient):
         )
 
         rows = result[0].rows
-        return {row["parameter"]: row["message_id"] for row in rows}
+        return {row["parameter"]: row["value"] for row in rows}
 
     async def delete_cache_by_telegram_id(self, telegram_id: int) -> None:
         """
@@ -492,15 +511,23 @@ class CacheClient(YDBClient):
         return Cache(
             telegram_id=row["telegram_id"],
             parameter=row.get("parameter"),
-            message_id=row.get("message_id"),
+            value=row.get("value"),
         )
 
     def _to_params(self, cache: Cache) -> dict:
         return {
             "$telegram_id": (cache.telegram_id, ydb.PrimitiveType.Uint64),
             "$parameter": (cache.parameter, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
-            "$message_id": (cache.message_id, ydb.OptionalType(ydb.PrimitiveType.Int32)),
+            "$value": (cache.value, ydb.OptionalType(ydb.PrimitiveType.Uint64)),
         }
+
+# --------------------------------------------------------- ОЧИЩЕНИЕ ТАБЛИЦ -------------------------------------------------------
+
+async def clear_all_tables_on_ydb():
+    # Чистка всех таблиц в базе (без удаления)
+    async with YDBClient() as client:
+        await client.clear_all_tables()
+        print("ALL tables cleared successfully!")
 
 
 # --------------------------------------------------------- СОЗДАНИЕ ТАБЛИЦ -------------------------------------------------------

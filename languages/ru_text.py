@@ -26,7 +26,9 @@ TEXT = {'start': 'Привет, {first_name}!\n'
                 'Пропишите суммы через пробел, минимум 2 варианта\n'
                 'Подписчики смогут выбрать одну из них <i>(например: 50 100 250 500)</i>\n'
                 '<i>Учитывайте, что цены представленны в Звездах ⭐️</i>',
-        'end':''
+        'end':'Заполнение донат-объявления завершено\n'
+                'Вот ваше объявление для публикации:\n'
+                '<i>При переходе по ссылке будет отображаться объявление с суммами донатов</i>'
         }
 
 BUTTONS_TEXT = {'begin': 'Создать донат-компанию',
@@ -37,5 +39,5 @@ IMAGE = {'step_1': 'AgACAgIAAxkBAAPRaN0VRp0YSu3EAAHxAblFz5YlXv1lAAK7-DEb69noSl5Q
          'step_3': 'AgACAgIAAxkBAAPTaN0Vcr6dhRIeNHS-MGF3x2RkGn4AAr_4MRvr2ehKpxrUZRkuIncBAAMCAAN3AAM2BA',
          'step_4': 'AgACAgIAAxkBAAPUaN0VeBF_Ah1PBN9ovxZka1ujVTkAAsH4MRvr2ehKghv6zMTcFDIBAAMCAAN3AAM2BA',
          'step_5': 'AgACAgIAAxkBAAPVaN0VepcGdIyMjEva_dnNelb5ft4AAsL4MRvr2ehKb8UMMpxjAjIBAAMCAAN3AAM2BA',
-         'end':''
+         'end':'AgACAgIAAxkBAAIBHGjjb51O2-vRhYYVJvopvjE4FjVZAAKI-jEbl1EgS8ToCJIomuFeAQADAgADdwADNgQ'
          }
