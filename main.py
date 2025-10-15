@@ -71,7 +71,7 @@ async def cmd_set_description(message: types.Message):
 
 
 @dp.message(CommandStart())
-async def cmd_start(message: types.Message, command: CommandStart):
+async def cmd_start(message: types.Message):
     user_id = message.from_user.id
     first_name = message.from_user.first_name
     user_lang = message.from_user.language_code
@@ -209,7 +209,7 @@ async def handle_text(message: types.Message):
                                      media=types.InputMediaPhoto(media=images['IMAGE']['step_4'], caption=text['TEXT']['step_4']))
         
     elif step_number == 4:
-        link_pattern = re.compile(r"^https://t\.me/donate_company_bot\?start=[\w\d_-]+$")
+        link_pattern = re.compile(r"^https://t\.me/DonateCampaignBot\?start=[\w\d_-]+$")
 
         if not link_pattern.match(user_text.strip()):
             return

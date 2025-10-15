@@ -80,6 +80,6 @@ async def get_images(lang_code: str) -> dict:
 
 async def get_caption(caption, link_text, ref_code) -> str:
     """Возвращает описание объявления"""
-    link = f"https://t.me/donate_company_bot/app?startapp={quote(ref_code)}"
+    link = f"https://t.me/DonateCampaignBot/app?startapp={quote(ref_code)}"
     return f"{caption}\n\n<a href='{link}'>{link_text}</a>"
 
