@@ -1,15 +1,20 @@
 import logging
 from aiogram.filters import CommandStart
 from aiogram.filters.command import Command
+from aiogram.types import LabeledPrice
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.storage.memory import MemoryStorage
 from config import BOT_API_KEY, ADMIN_ID, START_IMAGE
 from languages import get_texts, get_images, get_caption
+from languages.desc import DESCRIPTIONS, SHORT_DESCRIPTIONS, NAMES
 from aiogram.client.default import DefaultBotProperties
 from buttons import *
-from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient
+from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient, loading_animation
 from config import YDB_ENDPOINT, YDB_PATH, YDB_TOKEN
 import re
+
+
+# ------------------------------------------------------------------- Настройки -------------------------------------------------------------
 
 
 # Настройка логирования
@@ -29,6 +34,42 @@ async def cmd_test(message: types.Message, ):
     await message.answer_photo(photo='AgACAgIAAxkBAAMeaNvHX1PBgnIyTHonRxADYB4HDKkAAq70MRvkkeFKjKA0At8sHiQBAAMCAAN4AAM2BA', caption=caption)
 
 
+# установка описания
+@dp.message(Command("set_description"))
+async def cmd_set_description(message: types.Message):
+    user_id = message.from_user.id
+    if user_id == ADMIN_ID:
+        # установка описания для бота на разных языках
+        for lang, text in DESCRIPTIONS.items():
+            try:
+                await bot.set_my_description(description=text, language_code=lang)
+            except Exception as e:
+                print(f"Ошбика установки описания для языка {lang} - {e}")
+            else:
+                print("Описание для бота установлено ✅")
+
+        # установка короткого описания для бота на разных языках
+        for lang, text in SHORT_DESCRIPTIONS.items():
+            try:
+                await bot.set_my_short_description(short_description=text, language_code=lang)
+            except Exception as e:
+                print(f"Ошбика установки короткого описания для языка {lang} - {e}")
+            else:
+                print("Короткое описание для бота установлено ✅")
+
+        # установка имени бота на разных языках
+        for lang, name in NAMES.items():
+            try:
+                await bot.set_my_name(name=name, language_code=lang)
+            except Exception as e:
+                print(f"Ошбика установки имени для языка {lang} - {e}")
+            else:
+                print("Название бота установлено ✅")
+
+
+# ------------------------------------------------------------------- Донат компания -------------------------------------------------------
+
+
 @dp.message(CommandStart())
 async def cmd_start(message: types.Message, command: CommandStart):
     user_id = message.from_user.id
@@ -37,10 +78,26 @@ async def cmd_start(message: types.Message, command: CommandStart):
 
     text = await get_texts(user_lang)
 
-    # TODO логика донатеров
-    if command.args:
-        pass
+    message_id = await loading_animation(bot, message, text["TEXT"]["loading"])
+    await bot.delete_message(chat_id=message.chat.id, message_id=message_id.message_id)
+
+    async with CacheClient() as client:
+        user_cache = await client.get_cache_by_telegram_id(user_id)
     
+    ref_id = int(user_cache.get("referal")) if user_cache.get("referal") else None
+    print(f"ref_id={ref_id}")
+
+    # логика донатеров
+    if ref_id:
+        async with DonateCompanyClient() as donate_client, CacheClient() as cache_client:
+            company = await donate_client.get_company_by_id(ref_id)
+            amounts = list(map(int, company.prices.split()))
+            await message.answer_photo(photo=company.photo_id, caption=company.about_company,
+                                                   reply_markup=await get_payment_buttons(text, amounts, company.telegram_id))
+        
+
+            await cache_client.delete_cache_by_telegram_id_and_parameter(user_id, "referal")
+
     # логика creators
     else:
         start_message = await message.answer_photo(photo=START_IMAGE, caption=text['TEXT']['start'].format(first_name=first_name),
@@ -175,7 +232,7 @@ async def handle_text(message: types.Message):
 
         async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as donate_client, CacheClient() as cache_client:
             await asyncio.gather(
-                donate_client.update_company_fields(user_id, prices=user_text),
+                donate_client.update_company_fields(user_id, prices=user_text.strip()),
                 cache_client.insert_cache(Cache(telegram_id=user_id, parameter="step", value=6))
                 )
         await bot.edit_message_media(chat_id=message.chat.id, message_id=msg_id,
@@ -189,10 +246,77 @@ async def handle_text(message: types.Message):
                              caption=await get_caption(company.about_company, company.link_text, company.ref_code))
 
 
-#TODO Congratulation! Заполнение донат-объявления завершено
+# ------------------------------------------------------------------- ОПЛАТА -------------------------------------------------------
 
 
-# вот ваше объявление для публикации:...
+# обработка колбека оплаты
+@dp.callback_query(lambda c: c.data.startswith("pay_intentions"))
+async def handle_intentions_pay(callback: types.CallbackQuery):
+    user_id = callback.from_user.id
+    user_lang = callback.from_user.language_code
+    
+    _, amount_str, telegram_id = callback.data.split("|")
+    amount = int(amount_str)
+    telegram_id = int(telegram_id)
+
+    texts = await get_texts(user_lang)
+
+    async with DonateCompanyClient() as donate_client:
+        company = await donate_client.get_company_by_id(telegram_id)
+
+    label = company.link_text
+    title = company.link_text
+    description = texts["TEXT"]["payment"]["description"].format(amount=amount)
+
+
+    prices = [LabeledPrice(label=label, amount=amount)]
+
+    sent_invoice = await callback.message.answer_invoice(
+        title=title,
+        description=description,
+        payload=f"payment|{amount}|{company.ref_code}",
+        provider_token="",
+        currency="XTR",
+        prices=prices,
+        reply_markup=payment_button(texts)
+    )
+
+    # сохраняем в Кэш
+    async with CacheClient() as cache_client:
+        new_cache = Cache(user_id, "payment_message_id", sent_invoice.message_id)
+        await cache_client.insert_cache(new_cache)
+
+    await callback.answer(texts["TEXT"]["notifications"]["payment_sent"])
+
+
+@dp.pre_checkout_query()
+async def pre_checkout(pre_checkout_query: types.PreCheckoutQuery):
+    await pre_checkout_query.answer(ok=True)
+
+
+@dp.message(lambda message: message.successful_payment is not None)
+async def on_successful_payment(message: types.Message):
+    payload = message.successful_payment.invoice_payload
+    user_id = message.from_user.id
+    user_lang = message.from_user.language_code
+
+    # получение текста на языке пользователя
+    texts = await get_texts(user_lang)
+    
+    _, amount, ref_code = payload.split("|")
+
+    async with PaymentClient() as payment_client:
+        new_payment = Payment(user_id, int(amount), ref_code)
+        await payment_client.insert_payment(new_payment)
+
+    await message.answer(texts["TEXT"]["payment"]["payment_accepted"])
+
+    # удаление старого сообщения
+    async with CacheClient() as cache_client:
+        cached_messages = await cache_client.get_cache_by_telegram_id(user_id)
+        payment_message_id = cached_messages.get("payment_message_id")
+    await bot.delete_message(chat_id=message.chat.id, message_id=payment_message_id)
+    await bot.send_message(chat_id=message.chat.id, text=texts["TEXT"]["ad"])
 
 
 # ------------------------------------------------------------------- Обработка других форматов -------------------------------------------------------
@@ -204,6 +328,9 @@ async def delete_unwanted(message: types.Message):
         await message.delete()
     except Exception as e:
         print(f"⚠️ Не удалось удалить сообщение: {e}")
+
+
+# ------------------------------------------------------------------------ Запуск -------------------------------------------------------------
 
 
 async def main():

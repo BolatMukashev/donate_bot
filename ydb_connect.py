@@ -477,6 +477,16 @@ class CacheClient(YDBClient):
 
         rows = result[0].rows
         return {row["parameter"]: row["value"] for row in rows}
+    
+    async def delete_cache(self, telegram_id: int) -> None:
+        """
+        Удаление всех записей кэша
+        """
+        await self.execute_query(
+            """
+            DELETE FROM cache;
+            """
+        )
 
     async def delete_cache_by_telegram_id(self, telegram_id: int) -> None:
         """
@@ -521,6 +531,7 @@ class CacheClient(YDBClient):
             "$value": (cache.value, ydb.OptionalType(ydb.PrimitiveType.Uint64)),
         }
 
+
 # --------------------------------------------------------- ОЧИЩЕНИЕ ТАБЛИЦ -------------------------------------------------------
 
 async def clear_all_tables_on_ydb():
@@ -528,6 +539,13 @@ async def clear_all_tables_on_ydb():
     async with YDBClient() as client:
         await client.clear_all_tables()
         print("ALL tables cleared successfully!")
+
+
+async def clear_cache_table_on_ydb():
+    # Чистка таблицы cache
+    async with CacheClient() as client:
+        await client.delete_cache()
+        print("Table 'CACHE' cleared successfully!")    
 
 
 # --------------------------------------------------------- СОЗДАНИЕ ТАБЛИЦ -------------------------------------------------------
@@ -549,8 +567,28 @@ async def create_tables_on_ydb():
         print("Table 'CACHE' created successfully!")
 
 
+# --------------------------------------------------------- АНИМАЦИЯ ЗАГРУЗКИ -------------------------------------------------------
+
+
+import asyncio
+
+async def loading_animation(bot, message, text):
+    msg = await message.answer(text=text)
+    dots = ""
+    for i in range(9):  # количество циклов
+        dots = "." * ((i % 3) + 1)  # ".", "..", "...", "...."
+        await asyncio.sleep(0.7)
+        await bot.edit_message_text(
+            chat_id=message.chat.id,
+            message_id=msg.message_id,
+            text=f"{text}{dots}"
+        )
+    return msg
+
+
+
 # --------------------------------------------------------- ЗАПУСК -------------------------------------------------------
 
 
 if __name__ == "__main__":
-    asyncio.run(create_tables_on_ydb())
+    asyncio.run(clear_cache_table_on_ydb())

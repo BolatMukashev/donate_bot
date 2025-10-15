@@ -65,5 +65,8 @@ async def cache_test():
 
 
 if __name__ == "__main__":
-    asyncio.run(create_new_payment())
+    # asyncio.run(create_new_payment())
+    strrr = "1 2 3 4 5"
+    li = list(map(int, strrr.split()))
+    print(li)
 

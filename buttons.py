@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
-from uuid import uuid4
 
 
 async def donate_company_begin_button(texts: dict):
@@ -12,9 +11,21 @@ async def donate_company_begin_button(texts: dict):
     return markup
 
 
-#TODO получать список?
-def payment_keyboard(texts: dict):
+def payment_button(texts: dict):
+    # кнопка оплатить
     builder = InlineKeyboardBuilder()
     builder.button(text=texts["BUTTONS_TEXT"]["pay"], pay=True)
     
     return builder.as_markup()
+
+
+async def get_payment_buttons(texts: dict, amounts: list, telegram_id: int):
+    buttons = []
+    # получить кнопки для 
+    for amount in amounts:
+        button = InlineKeyboardButton(text=texts["BUTTONS_TEXT"]["amount"].format(amount=amount), callback_data=f"pay_intentions|{amount}|{telegram_id}", pay=True)
+        buttons.append([button])
+
+    markup = InlineKeyboardMarkup(inline_keyboard=buttons)
+    
+    return markup
