@@ -44,10 +44,10 @@ BUTTONS_TEXT = {'begin': 'Создать донат-компанию',
                 'pay': 'Оплатить',
                 'amount': '⭐️ {amount}'}
 
-IMAGE = {'step_1': 'AgACAgIAAxkBAAPRaN0VRp0YSu3EAAHxAblFz5YlXv1lAAK7-DEb69noSl5QzxJgHJVzAQADAgADdwADNgQ',
-         'step_2': 'AgACAgIAAxkBAAPSaN0VaE0478soMSjUmqavdvI-ZfMAAr34MRvr2ehKE-rXyzkrsgsBAAMCAAN3AAM2BA',
-         'step_3': 'AgACAgIAAxkBAAPTaN0Vcr6dhRIeNHS-MGF3x2RkGn4AAr_4MRvr2ehKpxrUZRkuIncBAAMCAAN3AAM2BA',
-         'step_4': 'AgACAgIAAxkBAAPUaN0VeBF_Ah1PBN9ovxZka1ujVTkAAsH4MRvr2ehKghv6zMTcFDIBAAMCAAN3AAM2BA',
-         'step_5': 'AgACAgIAAxkBAAPVaN0VepcGdIyMjEva_dnNelb5ft4AAsL4MRvr2ehKb8UMMpxjAjIBAAMCAAN3AAM2BA',
-         'end':'AgACAgIAAxkBAAIBHGjjb51O2-vRhYYVJvopvjE4FjVZAAKI-jEbl1EgS8ToCJIomuFeAQADAgADdwADNgQ'
+IMAGE = {'step_1': 'AgACAgIAAxkBAAMOaPNv9s_YDyqZLLRlNmUzpBvC0DkAAlP4MRtVnqBLFBHrZtKvcN8BAAMCAAN3AAM2BA',
+         'step_2': 'AgACAgIAAxkBAAMPaPNv_JFkXag-GpnUm-bSXa7aWNMAAlT4MRtVnqBLLrdjY1chDpcBAAMCAAN3AAM2BA',
+         'step_3': 'AgACAgIAAxkBAAMQaPNwBVEVAUPa1PDMcekT8_fAiFoAAlX4MRtVnqBLdkRSBSbovrcBAAMCAAN3AAM2BA',
+         'step_4': 'AgACAgIAAxkBAAMRaPNwCPwmYLhav-I3tl0N4mP8w4gAAlb4MRtVnqBLYAJSt-PZnXABAAMCAAN3AAM2BA',
+         'step_5': 'AgACAgIAAxkBAAMSaPNwDLVQrj2gtmOgCzyvr8YbREoAAlf4MRtVnqBLnahmLnWHAYsBAAMCAAN3AAM2BA',
+         'end':'AgACAgIAAxkBAAMTaPNwEBVTNXIpkVjkzhPwkv3JzdoAAlj4MRtVnqBL-MEHpvzfaTwBAAMCAAN3AAM2BA'
          }

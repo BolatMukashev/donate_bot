@@ -591,4 +591,4 @@ async def loading_animation(bot, message, text):
 
 
 if __name__ == "__main__":
-    asyncio.run(clear_cache_table_on_ydb())
+    asyncio.run(create_tables_on_ydb())
