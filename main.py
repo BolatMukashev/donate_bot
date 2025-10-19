@@ -146,13 +146,13 @@ async def handle_photo(message: types.Message):
 
     step_number = int(user_cache.get("step")) if user_cache.get("step") else None
 
-    # await message.delete()
+    await message.delete()
 
     photo = message.photo[-1]
     file_id = photo.file_id
 
-    await message.answer(file_id)
-    return
+    # await message.answer(file_id)
+    # return
 
     if step_number != 1:
         return
