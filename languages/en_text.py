@@ -57,7 +57,7 @@ TEXT = {
     },
 
     "ad": "To create your own donation campaign\njust tap 👉 /start",
-    "loading": "Loading…"
+    "loading": "Loading"
 }
 
 BUTTONS_TEXT = {

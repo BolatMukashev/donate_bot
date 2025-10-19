@@ -4,12 +4,12 @@ from . import (
 )
 
 """
-    kk_text, pt_br_text,
+    kk_text,
     de_text, fr_text, it_text, es_text, nl_text, sv_text, fi_text, no_text,
     he_text, ko_text, ja_text, cs_text, sk_text, sl_text, pl_text,
     pt_text, hr_text, ar_text, be_text, ca_text, hu_text, id_text,
     ms_text, fa_text, ro_text, sr_text, tr_text, uk_text, uz_text,
-    hi_text, vi_text, th_text, zh_text, zh_hans_text, zh_hant_text, el_text
+    hi_text, vi_text, th_text, zh_text, el_text
 """
 
 LANGUAGES = {
@@ -21,7 +21,6 @@ LANGUAGES = {
 """
     
     "kk": {"TEXT": kk_text.TEXT, "BUTTONS_TEXT": kk_text.BUTTONS_TEXT},
-    "pt-br": {"TEXT": pt_br_text.TEXT, "BUTTONS_TEXT": pt_br_text.BUTTONS_TEXT},
     "de": {"TEXT": de_text.TEXT, "BUTTONS_TEXT": de_text.BUTTONS_TEXT},
     "fr": {"TEXT": fr_text.TEXT, "BUTTONS_TEXT": fr_text.BUTTONS_TEXT},
     "it": {"TEXT": it_text.TEXT, "BUTTONS_TEXT": it_text.BUTTONS_TEXT},
@@ -55,8 +54,6 @@ LANGUAGES = {
     "vi": {"TEXT": vi_text.TEXT, "BUTTONS_TEXT": vi_text.BUTTONS_TEXT},
     "th": {"TEXT": th_text.TEXT, "BUTTONS_TEXT": th_text.BUTTONS_TEXT},
     "zh": {"TEXT": zh_text.TEXT, "BUTTONS_TEXT": zh_text.BUTTONS_TEXT},
-    "zh-hans": {"TEXT": zh_hans_text.TEXT, "BUTTONS_TEXT": zh_hans_text.BUTTONS_TEXT},
-    "zh-hant": {"TEXT": zh_hant_text.TEXT, "BUTTONS_TEXT": zh_hant_text.BUTTONS_TEXT},
     "el": {"TEXT": el_text.TEXT, "BUTTONS_TEXT": el_text.BUTTONS_TEXT},
 """
 
@@ -68,7 +65,6 @@ IMAGES = {
 
 """
    "kk": {"IMAGE": en_text.IMAGE},
-    "pt-br": {"IMAGE": en_text.IMAGE},
     "de": {"IMAGE": en_text.IMAGE},
     "fr": {"IMAGE": en_text.IMAGE},
     "it": {"IMAGE": en_text.IMAGE},
@@ -102,8 +98,6 @@ IMAGES = {
     "vi": {"IMAGE": en_text.IMAGE},
     "th": {"IMAGE": en_text.IMAGE},
     "zh": {"IMAGE": en_text.IMAGE},
-    "zh-hans": {"IMAGE": en_text.IMAGE},
-    "zh-hant": {"IMAGE": en_text.IMAGE},
     "el": {"IMAGE": en_text.IMAGE},
 """
 

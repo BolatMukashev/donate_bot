@@ -11,10 +11,6 @@ DESCRIPTIONS = {
           "\n⭐️ Telegram Stars жұлдыздарын жазылушылардан, достардан және жанкүйерлерден тікелей Telegram-да қабылда"
           "\nҚарапайым. Жылдам. Артық қадамсыз 💫",
 
-    'pt_br': "Crie uma campanha de doação em um minuto ⚡"
-             "\nReceba ⭐️ Telegram Stars de seguidores, amigos e fãs diretamente no Telegram"
-             "\nSimples. Rápido. Sem complicações 💫",
-
     'de': "Erstelle in einer Minute eine Spendenkampagne ⚡"
           "\nErhalte ⭐️ Telegram Stars von Followern, Freunden und Fans direkt in Telegram"
           "\nEinfach. Schnell. Ohne Umwege 💫",
@@ -147,14 +143,6 @@ DESCRIPTIONS = {
           "\n直接在 Telegram 接收来自关注者、朋友和粉丝的 ⭐️ Telegram Stars"
           "\n简单。快速。无额外步骤 💫",
 
-    'zh_hans': "一分钟内创建捐赠活动 ⚡"
-               "\n直接在 Telegram 接收来自关注者、朋友和粉丝的 ⭐️ Telegram Stars"
-               "\n简单。快速。无额外步骤 💫",
-
-    'zh_hant': "一分鐘內建立捐款活動 ⚡"
-               "\n直接在 Telegram 接收來自關注者、朋友和粉絲的 ⭐️ Telegram Stars"
-               "\n簡單。快速。無額外步驟 💫",
-
     'el': "Δημιούργησε μια καμπάνια δωρεών σε ένα λεπτό ⚡"
           "\nΛάβε ⭐️ Telegram Stars από ακόλουθους, φίλους και θαυμαστές απευθείας στο Telegram"
           "\nΑπλά. Γρήγορα. Χωρίς περιττά βήματα 💫",
@@ -165,7 +153,6 @@ SHORT_DESCRIPTIONS = {
     'ru': "✨ Запускай донат-кампании и получай поддержку в ⭐️ Telegram Stars",
     'en': "✨ Launch donation campaigns and receive support with ⭐️ Telegram Stars",
     'kk': "✨ Донат науқандарын бастап, ⭐️ Telegram Stars арқылы қолдау ал",
-    'pt_br': "✨ Inicie campanhas de doação e receba apoio com ⭐️ Telegram Stars",
     'de': "✨ Starte Spendenkampagnen und erhalte Unterstützung mit ⭐️ Telegram Stars",
     'fr': "✨ Lancez vos campagnes de dons et recevez du soutien avec ⭐️ Telegram Stars",
     'it': "✨ Avvia campagne di donazione e ricevi supporto con ⭐️ Telegram Stars",
@@ -199,8 +186,6 @@ SHORT_DESCRIPTIONS = {
     'vi': "✨ Khởi chạy chiến dịch quyên góp và nhận hỗ trợ qua ⭐️ Telegram Stars",
     'th': "✨ เริ่มแคมเปญบริจาคและรับการสนับสนุนด้วย ⭐️ Telegram Stars",
     'zh': "✨ 发起捐款活动，通过 ⭐️ Telegram Stars 获得支持",
-    'zh_hans': "✨ 发起捐款活动，通过 ⭐️ Telegram Stars 获得支持",
-    'zh_hant': "✨ 發起捐款活動，透過 ⭐️ Telegram Stars 獲得支持",
     'el': "✨ Ξεκίνησε καμπάνιες δωρεών και λάβε υποστήριξη μέσω ⭐️ Telegram Stars",
 }
 
@@ -209,7 +194,6 @@ NAMES = {
     'ru': "Бот для Донат Кампаний",
     'en': "Bot for Donation Campaigns",
     'kk': "Донат науқандары боты",
-    'pt_br': "Bot para Campanhas de Doação",
     'de': "Bot für Spendenkampagnen",
     'fr': "Bot pour les campagnes de dons",
     'it': "Bot per campagne di donazioni",
@@ -243,8 +227,6 @@ NAMES = {
     'vi': "Bot cho chiến dịch quyên góp",
     'th': "บอทสำหรับแคมเปญบริจาค",
     'zh': "捐款活动机器人",
-    'zh_hans': "捐款活动机器人",
-    'zh_hant': "捐款活動機器人",
     'el': "Bot για εκστρατείες δωρεών",
 }
 
