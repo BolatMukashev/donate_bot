@@ -146,13 +146,13 @@ async def handle_photo(message: types.Message):
 
     step_number = int(user_cache.get("step")) if user_cache.get("step") else None
 
-    await message.delete()
+    # await message.delete()
 
     photo = message.photo[-1]
     file_id = photo.file_id
 
-    # await message.answer(file_id)
-    # return
+    await message.answer(file_id)
+    return
 
     if step_number != 1:
         return
@@ -227,7 +227,7 @@ async def handle_text(message: types.Message):
                                      media=types.InputMediaPhoto(media=images['IMAGE']['step_5'], caption=text['TEXT']['step_5']))
     
     elif step_number == 5:
-        number_pattern = re.compile(r"^\d+\s+\d+(?:\s+\d+)*$")
+        number_pattern = re.compile(r"^\d+(?:\s+\d+){1,8}$")
 
         if not number_pattern.match(user_text.strip()):
             return

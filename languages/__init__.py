@@ -3,7 +3,6 @@ from . import (
      ru_text, en_text,
 )
 
-
 """
     kk_text, pt_br_text,
     de_text, fr_text, it_text, es_text, nl_text, sv_text, fi_text, no_text,
@@ -18,12 +17,6 @@ LANGUAGES = {
     "en": {"TEXT": en_text.TEXT, "BUTTONS_TEXT": en_text.BUTTONS_TEXT},
 
 }
-
-IMAGES = {
-    "ru": {"IMAGE": ru_text.IMAGE},
-    "en": {"IMAGE": en_text.IMAGE},
-}
-
 
 """
     
@@ -65,6 +58,53 @@ IMAGES = {
     "zh-hans": {"TEXT": zh_hans_text.TEXT, "BUTTONS_TEXT": zh_hans_text.BUTTONS_TEXT},
     "zh-hant": {"TEXT": zh_hant_text.TEXT, "BUTTONS_TEXT": zh_hant_text.BUTTONS_TEXT},
     "el": {"TEXT": el_text.TEXT, "BUTTONS_TEXT": el_text.BUTTONS_TEXT},
+"""
+
+
+IMAGES = {
+    "ru": {"IMAGE": ru_text.IMAGE},
+    "en": {"IMAGE": en_text.IMAGE},
+}
+
+"""
+   "kk": {"IMAGE": en_text.IMAGE},
+    "pt-br": {"IMAGE": en_text.IMAGE},
+    "de": {"IMAGE": en_text.IMAGE},
+    "fr": {"IMAGE": en_text.IMAGE},
+    "it": {"IMAGE": en_text.IMAGE},
+    "es": {"IMAGE": en_text.IMAGE},
+    "nl": {"IMAGE": en_text.IMAGE},
+    "sv": {"IMAGE": en_text.IMAGE},
+    "fi": {"IMAGE": en_text.IMAGE},
+    "no": {"IMAGE": en_text.IMAGE},
+    "he": {"IMAGE": en_text.IMAGE},
+    "ko": {"IMAGE": en_text.IMAGE},
+    "ja": {"IMAGE": en_text.IMAGE},
+    "cs": {"IMAGE": en_text.IMAGE},
+    "sk": {"IMAGE": en_text.IMAGE},
+    "sl": {"IMAGE": en_text.IMAGE},
+    "pl": {"IMAGE": en_text.IMAGE},
+    "pt": {"IMAGE": en_text.IMAGE},
+    "hr": {"IMAGE": en_text.IMAGE},
+    "ar": {"IMAGE": en_text.IMAGE},
+    "be": {"IMAGE": en_text.IMAGE},
+    "ca": {"IMAGE": en_text.IMAGE},
+    "hu": {"IMAGE": en_text.IMAGE},
+    "id": {"IMAGE": en_text.IMAGE},
+    "ms": {"IMAGE": en_text.IMAGE},
+    "fa": {"IMAGE": en_text.IMAGE},
+    "ro": {"IMAGE": en_text.IMAGE},
+    "sr": {"IMAGE": en_text.IMAGE},
+    "tr": {"IMAGE": en_text.IMAGE},
+    "uk": {"IMAGE": en_text.IMAGE},
+    "uz": {"IMAGE": en_text.IMAGE},
+    "hi": {"IMAGE": en_text.IMAGE},
+    "vi": {"IMAGE": en_text.IMAGE},
+    "th": {"IMAGE": en_text.IMAGE},
+    "zh": {"IMAGE": en_text.IMAGE},
+    "zh-hans": {"IMAGE": en_text.IMAGE},
+    "zh-hant": {"IMAGE": en_text.IMAGE},
+    "el": {"IMAGE": en_text.IMAGE},
 """
 
 
