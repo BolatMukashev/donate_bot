@@ -12,6 +12,7 @@ from buttons import *
 from ydb_connect import DonateCompanyClient, DonateCompany, PaymentClient, Payment, Cache, CacheClient, loading_animation
 from config import YDB_ENDPOINT, YDB_PATH, YDB_TOKEN
 import re
+import asyncio
 
 
 # ------------------------------------------------------------------- Настройки -------------------------------------------------------------
