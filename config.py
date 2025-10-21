@@ -5,6 +5,9 @@ config = dotenv_values(".env")
 
 BOT_API_KEY = os.environ.get("BOT_API_KEY") or config.get("BOT_API_KEY")
 ADMIN_ID = int(os.environ.get("ADMIN_ID")) if os.environ.get("ADMIN_ID") else int(config.get("ADMIN_ID"))
+ASTANA_ID = int(os.environ.get("ASTANA_ID")) if os.environ.get("ASTANA_ID") else int(config.get("ASTANA_ID"))
+
+ADMINS = [ADMIN_ID, ASTANA_ID]
 
 
 YDB_ENDPOINT = os.environ.get("YDB_ENDPOINT") or config.get("YDB_ENDPOINT")

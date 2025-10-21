@@ -4,7 +4,7 @@ from aiogram.filters.command import Command
 from aiogram.types import LabeledPrice
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.fsm.storage.memory import MemoryStorage
-from config import BOT_API_KEY, ADMIN_ID, START_IMAGE
+from config import BOT_API_KEY, START_IMAGE, ADMINS
 from languages import get_texts, get_images, get_caption
 from languages.desc import DESCRIPTIONS, SHORT_DESCRIPTIONS, NAMES
 from aiogram.client.default import DefaultBotProperties
@@ -39,7 +39,7 @@ async def cmd_test(message: types.Message, ):
 @dp.message(Command("set_description"))
 async def cmd_set_description(message: types.Message):
     user_id = message.from_user.id
-    if user_id == ADMIN_ID:
+    if user_id in ADMINS:
         # установка описания для бота на разных языках
         for lang, text in DESCRIPTIONS.items():
             try:
@@ -152,7 +152,7 @@ async def handle_photo(message: types.Message):
     photo = message.photo[-1]
     file_id = photo.file_id
 
-    if user_id == ADMIN_ID:
+    if user_id in ADMINS:
         await message.answer(file_id)
 
     if step_number != 1:
