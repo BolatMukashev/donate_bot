@@ -152,8 +152,8 @@ async def handle_photo(message: types.Message):
     photo = message.photo[-1]
     file_id = photo.file_id
 
-    # await message.answer(file_id)
-    # return
+    if user_id == ADMIN_ID:
+        await message.answer(file_id)
 
     if step_number != 1:
         return

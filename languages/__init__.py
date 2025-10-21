@@ -1,10 +1,9 @@
 from urllib.parse import quote
 from . import (
-     ru_text, en_text,
+     ru_text, en_text, kk_text,
 )
 
 """
-    kk_text,
     de_text, fr_text, it_text, es_text, nl_text, sv_text, fi_text, no_text,
     he_text, ko_text, ja_text, cs_text, sk_text, sl_text, pl_text,
     pt_text, hr_text, ar_text, be_text, ca_text, hu_text, id_text,
@@ -15,12 +14,11 @@ from . import (
 LANGUAGES = {
     "ru": {"TEXT": ru_text.TEXT, "BUTTONS_TEXT": ru_text.BUTTONS_TEXT},
     "en": {"TEXT": en_text.TEXT, "BUTTONS_TEXT": en_text.BUTTONS_TEXT},
+    "kk": {"TEXT": kk_text.TEXT, "BUTTONS_TEXT": kk_text.BUTTONS_TEXT},
 
 }
 
 """
-    
-    "kk": {"TEXT": kk_text.TEXT, "BUTTONS_TEXT": kk_text.BUTTONS_TEXT},
     "de": {"TEXT": de_text.TEXT, "BUTTONS_TEXT": de_text.BUTTONS_TEXT},
     "fr": {"TEXT": fr_text.TEXT, "BUTTONS_TEXT": fr_text.BUTTONS_TEXT},
     "it": {"TEXT": it_text.TEXT, "BUTTONS_TEXT": it_text.BUTTONS_TEXT},
@@ -61,10 +59,10 @@ LANGUAGES = {
 IMAGES = {
     "ru": {"IMAGE": ru_text.IMAGE},
     "en": {"IMAGE": en_text.IMAGE},
+    "kk": {"IMAGE": en_text.IMAGE},
 }
 
 """
-   "kk": {"IMAGE": en_text.IMAGE},
     "de": {"IMAGE": en_text.IMAGE},
     "fr": {"IMAGE": en_text.IMAGE},
     "it": {"IMAGE": en_text.IMAGE},
