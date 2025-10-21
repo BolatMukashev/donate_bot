@@ -12,8 +12,7 @@ TEXT = {'start': 'Привет, {first_name}!\n'
                  '• Начисление - сразу после получения оплаты\n'
                  '• Ограничения — можно создать только 1 донат компанию\n'
                  '<i>При попытке создать новую донат-компанию старая будет удалена</i>\n'
-                 'Выводить можно от ⭐️ 1000 и только через месяц после поступления\n'
-                 'Подробнее можно почитать в официальном <a href="https://telegram.org/tos/affiliate-program/ru">Соглашении</a>',
+                 'Подробнее о других ограничениях можно почитать в официальном <a href="https://telegram.org/tos/affiliate-program/ru">Соглашении</a>',
         'step_1': 'Начнём! Объявление для донат-компании состоит из 5 шагов\n\n'
                 '<b>Шаг 1. Отправь ФОТО</b>\n'
                 'Оно будет использоваться в объявлении вашей донат-компании\n'
@@ -70,5 +69,46 @@ IMAGE = {'step_1': '',
          'step_5': '',
          'end':''
          }
+
+         
+PRICES = {'en': {'name': 'английский', 'incognito': 100, 'add_to_collection': 40},
+          'de': {'name': 'немецкий', 'incognito': 100, 'add_to_collection': 40},
+          'fr': {'name': 'французский', 'incognito': 100, 'add_to_collection': 40},
+          'it': {'name': 'итальянский', 'incognito': 100, 'add_to_collection': 40},
+          'es': {'name': 'испанский', 'incognito': 100, 'add_to_collection': 40},
+          'nl': {'name': 'нидерландский', 'incognito': 100, 'add_to_collection': 40},
+          'sv': {'name': 'шведский', 'incognito': 100, 'add_to_collection': 40},
+          'fi': {'name': 'финский', 'incognito': 100, 'add_to_collection': 40},
+          'no': {'name': 'норвежский', 'incognito': 100, 'add_to_collection': 40},
+          'he': {'name': 'иврит', 'incognito': 100, 'add_to_collection': 40},
+          'ko': {'name': 'корейский', 'incognito': 100, 'add_to_collection': 40},
+          'ja': {'name': 'японский', 'incognito': 100, 'add_to_collection': 40},
+          'cs': {'name': 'чешский', 'incognito': 100, 'add_to_collection': 40},
+          'sk': {'name': 'словацкий', 'incognito': 100, 'add_to_collection': 40},
+          'sl': {'name': 'словенский', 'incognito': 100, 'add_to_collection': 40},
+          'pl': {'name': 'польский', 'incognito': 100, 'add_to_collection': 40},
+          'pt': {'name': 'португальский', 'incognito': 100, 'add_to_collection': 40},
+          'hr': {'name': 'хорватский', 'incognito': 100, 'add_to_collection': 40},
+
+          'ru': {'name': 'русский', 'incognito': 50, 'add_to_collection': 20},
+          'ar': {'name': 'арабский', 'incognito': 50, 'add_to_collection': 20},
+          'be': {'name': 'белорусский', 'incognito': 50, 'add_to_collection': 20},
+          'ca': {'name': 'каталанский', 'incognito': 50, 'add_to_collection': 20},
+          'hu': {'name': 'венгерский', 'incognito': 50, 'add_to_collection': 20},
+          'id': {'name': 'индонезийский', 'incognito': 50, 'add_to_collection': 20},
+          'kk': {'name': 'казахский', 'incognito': 50, 'add_to_collection': 20},
+          'ms': {'name': 'малайский', 'incognito': 50, 'add_to_collection': 20},
+          'fa': {'name': 'персидский', 'incognito': 50, 'add_to_collection': 20},
+          'ro': {'name': 'румынский', 'incognito': 50, 'add_to_collection': 20},
+          'sr': {'name': 'сербский', 'incognito': 50, 'add_to_collection': 20},
+          'tr': {'name': 'турецкий', 'incognito': 50, 'add_to_collection': 20},
+          'uk': {'name': 'украинский', 'incognito': 50, 'add_to_collection': 20},
+          'uz': {'name': 'узбекский', 'incognito': 50, 'add_to_collection': 20},
+          'hi': {'name': 'хинди', 'incognito': 50, 'add_to_collection': 20},
+          'vi': {'name': 'вьетнамский', 'incognito': 50, 'add_to_collection': 20},
+          'th': {'name': 'тайский', 'incognito': 50, 'add_to_collection': 20},
+          'zh': {'name': 'китайский', 'incognito': 50, 'add_to_collection': 20},
+          'el': {'name': 'греческий', 'incognito': 50, 'add_to_collection': 20},
+          }
 
 """

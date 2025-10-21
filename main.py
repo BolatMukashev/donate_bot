@@ -121,7 +121,8 @@ async def query_get_text(callback: types.CallbackQuery):
 
     new_company = DonateCompany(
         telegram_id=user_id,
-        first_name=first_name
+        first_name=first_name,
+        user_lang=user_lang
     )
     async with DonateCompanyClient(YDB_ENDPOINT, YDB_PATH, YDB_TOKEN) as client:
         await client.insert_company(new_company)

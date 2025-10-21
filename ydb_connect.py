@@ -141,6 +141,7 @@ class YDBClient:
 class DonateCompany:
     telegram_id: int
     first_name: Optional[str] = None
+    user_lang: Optional[str] = None
     photo_id: Optional[str] = None
     about_company: Optional[str] = None
     link_text: Optional[str] = None
@@ -156,6 +157,7 @@ class DonateCompanyClient(YDBClient):
             CREATE TABLE `donate_companies` (
                 `telegram_id` Uint64 NOT NULL,
                 `first_name` Utf8,
+                `user_lang` Utf8,
                 `photo_id` Utf8,
                 `about_company` Utf8,
                 `link_text` Utf8,
@@ -175,6 +177,7 @@ class DonateCompanyClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
             DECLARE $first_name AS Utf8?;
+            DECLARE $user_lang AS Utf8?;
             DECLARE $photo_id AS Utf8?;
             DECLARE $about_company AS Utf8?;
             DECLARE $link_text AS Utf8?;
@@ -182,9 +185,9 @@ class DonateCompanyClient(YDBClient):
             DECLARE $prices AS Utf8?;
 
             UPSERT INTO donate_companies (
-                telegram_id, first_name, photo_id, about_company, link_text, ref_code, prices
+                telegram_id, first_name, user_lang, photo_id, about_company, link_text, ref_code, prices
             ) VALUES (
-                $telegram_id, $first_name, $photo_id, $about_company, $link_text, $ref_code, $prices
+                $telegram_id, $first_name, $user_lang, $photo_id, $about_company, $link_text, $ref_code, $prices
             );
             """,
             self._to_params(donate_company)
@@ -197,7 +200,7 @@ class DonateCompanyClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
 
-            SELECT telegram_id, first_name, photo_id, about_company, link_text, ref_code, prices
+            SELECT telegram_id, first_name, user_lang, photo_id, about_company, link_text, ref_code, prices
             FROM donate_companies
             WHERE telegram_id = $telegram_id;
             """,
@@ -235,6 +238,7 @@ class DonateCompanyClient(YDBClient):
             """
             DECLARE $telegram_id AS Uint64;
             DECLARE $first_name AS Utf8?;
+            DECLARE $user_lang AS Utf8?;
             DECLARE $photo_id AS Utf8?;
             DECLARE $about_company AS Utf8?;
             DECLARE $link_text AS Utf8?;
@@ -243,6 +247,7 @@ class DonateCompanyClient(YDBClient):
 
             UPDATE donate_companies SET
                 first_name = $first_name,
+                user_lang = $user_lang,
                 photo_id = $photo_id,
                 about_company = $about_company,
                 link_text = $link_text,
@@ -261,7 +266,7 @@ class DonateCompanyClient(YDBClient):
 
         # Фильтруем только поля, которые относятся к таблице users
         company_fields = {k: v for k, v in fields.items() 
-                      if k in ['first_name', 'photo_id', 'about_company', 'link_text', 'ref_code', 'prices']}
+                      if k in ['first_name', 'user_lang', 'photo_id', 'about_company', 'link_text', 'ref_code', 'prices']}
         
         if not company_fields:
             return False
@@ -303,6 +308,7 @@ class DonateCompanyClient(YDBClient):
         return DonateCompany(
             telegram_id=row["telegram_id"],
             first_name=row.get("first_name"),
+            user_lang=row.get("user_lang"),
             photo_id=row.get("photo_id"),
             about_company=row.get("about_company"),
             link_text=row.get("link_text"),
@@ -314,6 +320,7 @@ class DonateCompanyClient(YDBClient):
         return {
             "$telegram_id": (donate_company.telegram_id, ydb.PrimitiveType.Uint64),
             "$first_name": (donate_company.first_name, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
+            "$user_lang": (donate_company.user_lang, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$photo_id": (donate_company.photo_id, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$about_company": (donate_company.about_company, ydb.OptionalType(ydb.PrimitiveType.Utf8)),
             "$link_text": (donate_company.link_text, ydb.OptionalType(ydb.PrimitiveType.Utf8)),

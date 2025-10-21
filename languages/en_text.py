@@ -8,7 +8,7 @@ TEXT = {
              '• Limitation — only one campaign per user\n'
              '<i>If you create a new one, the previous campaign will be deleted automatically</i>\n\n'
              'You can withdraw from ⭐️ 1000 and only 30 days after the donation is received.\n'
-             'For more details, check the official <a href="https://telegram.org/tos/affiliate-program/en">Agreement</a>.',
+             'More information about other restrictions can be found in the official <a href="https://telegram.org/tos/affiliate-program/en">Agreement</a>.',
     
     'step_1': 'Let’s begin! Your donation campaign setup has 5 simple steps.\n\n'
               '<b>Step 1. Send a PHOTO</b>\n'
