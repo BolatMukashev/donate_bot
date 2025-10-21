@@ -147,7 +147,8 @@ async def handle_photo(message: types.Message):
 
     step_number = int(user_cache.get("step")) if user_cache.get("step") else None
 
-    await message.delete()
+    if user_id not in ADMINS:
+        await message.delete()
 
     photo = message.photo[-1]
     file_id = photo.file_id

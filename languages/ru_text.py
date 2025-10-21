@@ -1,3 +1,9 @@
+# переведи на немецкий язык
+# учитывай особенности языка, чтобы носители легко понимали смысл написанного 
+# нативный перевод — адаптированный так, чтобы звучал естественно и понятно для пользователей 
+# учти стиль Telegram, дружелюбный тон и культурные особенности
+
+
 TEXT = {'start': 'Привет, {first_name}!\n'
                  'Здесь ты можешь создать свою донат-компанию и собирать донаты в Звёздах ⭐️ (Telegram Stars)\n'
                  'Условия:\n'
@@ -55,3 +61,14 @@ IMAGE = {'step_1': 'AgACAgIAAxkBAAMOaPNv9s_YDyqZLLRlNmUzpBvC0DkAAlP4MRtVnqBLFBHr
          'step_5': 'AgACAgIAAxkBAAMSaPNwDLVQrj2gtmOgCzyvr8YbREoAAlf4MRtVnqBLnahmLnWHAYsBAAMCAAN3AAM2BA',
          'end':'AgACAgIAAxkBAAMTaPNwEBVTNXIpkVjkzhPwkv3JzdoAAlj4MRtVnqBL-MEHpvzfaTwBAAMCAAN3AAM2BA'
          }
+
+"""
+IMAGE = {'step_1': '',
+         'step_2': '',
+         'step_3': '',
+         'step_4': '',
+         'step_5': '',
+         'end':''
+         }
+
+"""

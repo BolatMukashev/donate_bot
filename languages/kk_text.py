@@ -63,10 +63,10 @@ BUTTONS_TEXT = {
     'amount': '⭐️ {amount}'
 }
 
-IMAGE = {'step_1': '',
-         'step_2': '',
-         'step_3': '',
-         'step_4': '',
-         'step_5': '',
-         'end':''
+IMAGE = {'step_1': 'AgACAgIAAxkBAAIBFWj3Kt1dASTHTrtyxrmv_aeWqRU9AAJs-TEbqu25SzTbJnQEbGB2AQADAgADeQADNgQ',
+         'step_2': 'AgACAgIAAxkBAAIBF2j3KuIoHS4GuwABan8enGhyO65_xwACbfkxG6rtuUvWUqtGabW_TQEAAwIAA3kAAzYE',
+         'step_3': 'AgACAgIAAxkBAAIBGWj3KyHWXGSj8QTDuMkc1On7vkeSAAJx-TEbqu25S8yefng5Wu3bAQADAgADeQADNgQ',
+         'step_4': 'AgACAgIAAxkBAAIBG2j3KycXHHU-HPZP3vL1AdEBG4ESAAJy-TEbqu25S5W4aFxTvKpEAQADAgADeQADNgQ',
+         'step_5': 'AgACAgIAAxkBAAIBHWj3Ky3SBFFxXko564bVyhEGMeUpAAJz-TEbqu25SwqumXndD7gPAQADAgADeQADNgQ',
+         'end':'AgACAgIAAxkBAAIBH2j3KzFwUCgitHEwFblbcM7tywbnAAJ1-TEbqu25SxLc81ZvkdWqAQADAgADeQADNgQ'
          }
